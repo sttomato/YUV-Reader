@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "YuvReader.h"
 #include "opencv2\opencv.hpp"
 
@@ -25,7 +24,7 @@ void YuvReader::open(const char * filePath) {
 	}
 }
 
-bool YuvReader::read(cv::OutputArray image) {
+bool YuvReader::read(cv::OutputArray image, bool convertBGR) {
 	initMatrix();
 	size_t nPixels = width * height;
 	size_t byteRead = fread(this->Y.data, sizeof(uint8_t), nPixels, file);
@@ -60,8 +59,9 @@ bool YuvReader::read(cv::OutputArray image) {
 
 	image.create(Size(width, height), CV_8UC3);
 	merge(array, image);
-
-	cvtColor(image, image, ColorConversionCodes::COLOR_YCrCb2BGR);
+	if (convertBGR) {
+		cvtColor(image, image, ColorConversionCodes::COLOR_YCrCb2BGR);
+	}
 	return true;
 }
 
